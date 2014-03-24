@@ -32,6 +32,13 @@ class BusDriverAdmin(admin.ModelAdmin):
     obj.created_by = user
     obj.save()
 
+  def get_queryset(self, request):
+    queryset = super(BusDriverAdmin, self).get_queryset(request)
+    if not request.user.is_superuser:
+      user = User.objects.get(user=request.user)
+      queryset = queryset.filter(created_by__line = user.line)
+    return queryset
+
 admin.site.register(Line, LineAdmin)
 admin.site.register(User, UserAdmin)
 admin.site.register(BusDriver, BusDriverAdmin)
