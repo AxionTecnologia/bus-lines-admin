@@ -2,7 +2,14 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
+
+class AuthUser(AbstractUser):
+  def has_module_perms(self, app_label):
+    return super(AuthUser, self).has_module_perms(app_label) if self.is_superuser else True
+
+  class Meta(AbstractUser.Meta):
+          swappable = 'AUTH_USER_MODEL'
 
 class Line(models.Model):
   number = models.IntegerField()
@@ -10,8 +17,8 @@ class Line(models.Model):
   def __unicode__(self):
     return u"Línea {0}".format(self.number)
 
-class User(models.Model):
-  user = models.ForeignKey(User, unique=True, blank=True, null=False)
+class AppUser(models.Model):
+  user = models.ForeignKey(AuthUser, unique=True, blank=True, null=False)
   line = models.ForeignKey(Line)
 
   def __unicode__(self):

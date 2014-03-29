@@ -1,20 +1,20 @@
 from django.contrib import admin
-from mantenedor.models import Line, User
-from mantenedor.forms import UserModelForm
+from mantenedor.models import Line, AppUser, AuthUser
+from mantenedor.forms import AppUserModelForm
 
 from django.contrib import auth
 
 class LineAdmin(admin.ModelAdmin):
   pass
 
-class UserAdmin(admin.ModelAdmin):
-  form = UserModelForm
+class AppUserAdmin(admin.ModelAdmin):
+  form = AppUserModelForm
   list_display = ('get_username', 'get_line_number', 'is_active')
   exclude = ('user',)
 
   def save_model(self, request, obj, form, change):
     username = form.cleaned_data.get('username')
-    user = auth.models.User.objects.create_user(
+    user = AuthUser.objects.create_user(
       username=username,
       password=username)
     user.is_staff = True
@@ -40,4 +40,4 @@ class BusDriverAdmin(admin.ModelAdmin):
     return queryset
 
 admin.site.register(Line, LineAdmin)
-admin.site.register(User, UserAdmin)
+admin.site.register(AppUser, AppUserAdmin)

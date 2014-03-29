@@ -2,23 +2,23 @@
 #-*- encoding: UTF-8 -*-
 
 from django import forms
-from mantenedor.models import Line, User
+
+from mantenedor.models import AppUser
+from linea.models import Bus
 
 class BaseModelForm(forms.ModelForm):
+  def __init__(self, *args, **kwargs):
+    request = kwargs.pop('request', None)
+    self.app_user = AppUser.objects.get(user=request.user)
+    super(BaseModelForm, self).__init__(*args, **kwargs)
+
+class BusModelForm(BaseModelForm):
 
   def clean(self):
-    pass
-
-class UserModelForm(forms.ModelForm):
-
-  def __init__(self, *args, **kwargs):
-    super(UserModelForm,self).__init__(*args,**kwargs)
-    if kwargs.get('instance'):
-      self.initial["username"] = kwargs.get('instance').user.username
-
-  line = forms.ModelChoiceField(queryset=Line.objects.all())
-  username = forms.CharField(label="Nombre usuario")
+    cleaned_data = self.cleaned_data
+    if Bus.objects.filter(ppu=cleaned_data.get('ppu'), line=self.app_user.line).count() >= 1:
+      raise forms.ValidationError("Bus already exists!")
+    return cleaned_data
 
   class Meta:
-    model = User
-
+    model = Bus

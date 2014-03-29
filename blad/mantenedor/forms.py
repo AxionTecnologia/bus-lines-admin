@@ -2,12 +2,12 @@
 #-*- encoding: UTF-8 -*-
 
 from django import forms
-from mantenedor.models import Line, User
+from mantenedor.models import Line, AppUser
 
-class UserModelForm(forms.ModelForm):
+class AppUserModelForm(forms.ModelForm):
 
   def __init__(self, *args, **kwargs):
-    super(UserModelForm,self).__init__(*args,**kwargs)
+    super(AppUserModelForm,self).__init__(*args,**kwargs)
     if kwargs.get('instance'):
       self.initial["username"] = kwargs.get('instance').user.username
 
@@ -15,5 +15,4 @@ class UserModelForm(forms.ModelForm):
   username = forms.CharField(label="Nombre usuario")
 
   class Meta:
-    model = User
-
+    model = AppUser
