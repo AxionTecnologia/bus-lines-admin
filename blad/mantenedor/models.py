@@ -29,16 +29,3 @@ class User(models.Model):
     return self.user.is_active
   is_active.boolean = True
   is_active.short_description = u"¿Activo?"
-
-class BusDriver(models.Model):
-  name = models.CharField(max_length=100)
-  created_by = models.ForeignKey(User, blank=True, null=False)
-
-  def get_line_number(self):
-    line = self.created_by.line
-    return u"{0}".format(line.number)
-  get_line_number.short_description = u"línea"
-
-  def get_full_name(self):
-    return u"{0}".format(self.name)
-  get_full_name.short_description = u"nombre"

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from mantenedor.models import Line, User, BusDriver
+from mantenedor.models import Line, User
 from mantenedor.forms import UserModelForm
 
 from django.contrib import auth
@@ -41,4 +41,3 @@ class BusDriverAdmin(admin.ModelAdmin):
 
 admin.site.register(Line, LineAdmin)
 admin.site.register(User, UserAdmin)
-admin.site.register(BusDriver, BusDriverAdmin)
