@@ -6,8 +6,8 @@ from itertools import repeat
 from django.contrib import admin
 
 from mantenedor.models import AppUser
-from linea.models import Person, Bus
-from linea.forms import BusModelForm, PersonModelForm
+from linea.models import Person, Bus, Route, Checkpoint
+from linea.forms import BusModelForm, PersonModelForm, RouteModelForm
 
 from django.contrib import auth
 
@@ -24,6 +24,13 @@ class BaseModelAdmin(admin.ModelAdmin):
     user = AppUser.objects.get(user=request.user)
     obj.line = user.line
     obj.save()
+
+  def save_formset(self, request, form, formset, change):
+    instances = formset.save(commit=False)
+    line = AppUser.objects.get(user=request.user).line
+    for instance in instances:
+      instance.line = line
+      instance.save()
 
   def get_queryset(self, request):
     queryset = super(BaseModelAdmin, self).get_queryset(request)
@@ -55,6 +62,17 @@ class BaseModelAdmin(admin.ModelAdmin):
     return ModelFormMetaClass
 
 
+class BaseTabularInline(admin.TabularInline):
+
+  exclude = ('line',)
+
+  def has_add_permission(self, request):
+    return True
+
+  def has_change_permission(self, request, instance=None):
+    return True
+
+
 class PersonAdmin(BaseModelAdmin):
   list_display = ('get_full_name', 'get_line_number')
   form = PersonModelForm
@@ -62,5 +80,14 @@ class PersonAdmin(BaseModelAdmin):
 class BusAdmin(BaseModelAdmin):
   form = BusModelForm
 
+class CheckpointInline(BaseTabularInline):
+  model = Checkpoint
+  extra = 1
+
+class RouteAdmin(BaseModelAdmin):
+  form = RouteModelForm
+  inlines = (CheckpointInline,)
+
 admin.site.register(Person, PersonAdmin)
 admin.site.register(Bus, BusAdmin)
+admin.site.register(Route, RouteAdmin)

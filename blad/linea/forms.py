@@ -4,13 +4,14 @@
 from django import forms
 
 from mantenedor.models import AppUser
-from linea.models import Bus, Person
+from linea.models import Bus, Person, Route
 
 class BaseModelForm(forms.ModelForm):
   def __init__(self, *args, **kwargs):
     request = kwargs.pop('request', None)
     self.app_user = AppUser.objects.get(user=request.user)
     super(BaseModelForm, self).__init__(*args, **kwargs)
+
 
 class BusModelForm(BaseModelForm):
 
@@ -23,6 +24,12 @@ class BusModelForm(BaseModelForm):
   class Meta:
     model = Bus
 
+
 class PersonModelForm(BaseModelForm):
   class Meta:
     model = Person
+
+
+class RouteModelForm(BaseModelForm):
+  class Meta:
+    model = Route

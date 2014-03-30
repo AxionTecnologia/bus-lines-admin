@@ -33,3 +33,13 @@ class Bus(BaseModel):
   inscription_date = models.DateField()
   belongs_to = models.ForeignKey(Person, related_name="belongs_to")
   driven_by = models.ForeignKey(Person, related_name="driven_by")
+
+
+class Route(BaseModel):
+  name = models.CharField(max_length=100)
+
+
+class Checkpoint(BaseModel):
+  x = models.IntegerField()
+  y = models.IntegerField()
+  route = models.ForeignKey(Route)
