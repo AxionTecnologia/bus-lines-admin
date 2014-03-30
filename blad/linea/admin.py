@@ -7,7 +7,7 @@ from django.contrib import admin
 
 from mantenedor.models import AppUser
 from linea.models import Person, Bus
-from linea.forms import BusModelForm
+from linea.forms import BusModelForm, PersonModelForm
 
 from django.contrib import auth
 
@@ -33,7 +33,7 @@ class BaseModelAdmin(admin.ModelAdmin):
     return queryset
 
   def get_model_perms(self, request):
-    """Every user that is not superuser has perms"""
+    """Every user that is not a superuser has perms"""
     mappings = super(BaseModelAdmin, self).get_model_perms(request).keys()
     mapping_value = True
     if request.user.is_superuser:
@@ -57,6 +57,7 @@ class BaseModelAdmin(admin.ModelAdmin):
 
 class PersonAdmin(BaseModelAdmin):
   list_display = ('get_full_name', 'get_line_number')
+  form = PersonModelForm
 
 class BusAdmin(BaseModelAdmin):
   form = BusModelForm
