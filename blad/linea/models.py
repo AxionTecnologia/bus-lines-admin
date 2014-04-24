@@ -11,7 +11,20 @@ class BaseModel(models.Model):
     abstract = True
 
 class Person(BaseModel):
+  DRIVER_LICENSE_TYPE_CHOICES = (
+    ('A1', 'A1'),
+  )
+
+  id_number = models.CharField(max_length=100)
   name = models.CharField(max_length=100)
+  surname = models.CharField(max_length=100)
+  address = models.CharField(max_length=150)
+  phone_number =  models.CharField(max_length=40)
+  internal_identifier = models.CharField(max_length=100)
+  is_owner = models.BooleanField()
+  is_driver = models.BooleanField()
+  driver_license_expires_at = models.DateField()
+  driver_license_type = models.CharField(max_length=2, choices=DRIVER_LICENSE_TYPE_CHOICES)
 
   def get_line_number(self):
     return u"{0}".format(self.line.number)
