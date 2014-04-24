@@ -44,4 +44,7 @@ class Route(BaseModel):
 class Checkpoint(BaseModel):
   x = models.IntegerField()
   y = models.IntegerField()
+  radius = models.IntegerField()
+  name = models.CharField(max_length=100)
   route = models.ForeignKey(Route)
+
