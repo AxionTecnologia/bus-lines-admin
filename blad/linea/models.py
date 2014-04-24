@@ -28,9 +28,11 @@ class Bus(BaseModel):
   chassis_number = models.CharField(max_length=100)
   serie_number = models.CharField(max_length=100)
   vin_number = models.CharField(max_length=100)
-  manufacture_year = models.DateField()
+  manufacture_year = models.IntegerField()
   acquisition_date = models.DateField()
   inscription_date = models.DateField()
+  internal_identifier = models.CharField(max_length=100)
+  bus_check_up_expires_at = models.DateField()
   belongs_to = models.ForeignKey(Person, related_name="belongs_to")
   driven_by = models.ForeignKey(Person, related_name="driven_by")
 
