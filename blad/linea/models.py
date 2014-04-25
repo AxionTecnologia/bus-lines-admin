@@ -61,6 +61,8 @@ class Point(BaseModel):
   radius = models.IntegerField()
   name = models.CharField(max_length=100)
 
+  def __unicode__(self):
+    return u"{0}".format(self.name)
 
 class Itinerary(BaseModel):
   route = models.ForeignKey(Route)
@@ -69,6 +71,7 @@ class Itinerary(BaseModel):
 
 class Checkpoint(BaseModel):
   point = models.ForeignKey(Point)
-  duration = models.IntegerField()
-  tolerance = models.IntegerField()
-  fine = models.IntegerField()
+  itinerary = models.ForeignKey(Itinerary)
+  duration = models.IntegerField(null=True, blank=False)
+  tolerance = models.IntegerField(null=True, blank=False)
+  fine = models.IntegerField(null=True, blank=False)

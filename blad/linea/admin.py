@@ -4,9 +4,11 @@
 from itertools import repeat
 
 from django.contrib import admin
+from django.contrib.admin import helpers
+from django.contrib.admin.util import unquote
 
 from mantenedor.models import AppUser
-from linea.models import Person, Bus, Route, Point, Itinerary
+from linea.models import Person, Bus, Route, Point, Itinerary, Checkpoint
 from linea.forms import BusModelForm, PersonModelForm, RouteModelForm, ItineraryModelForm
 
 from django.contrib import auth
@@ -92,23 +94,39 @@ class RouteAdmin(BaseModelAdmin):
   inlines = (PointInline,)
 
 
+class CheckpointInline(BaseTabularInline):
+  model = Checkpoint
+  extra = 1
+
+
 class ItineraryAdmin(BaseModelAdmin):
   form = ItineraryModelForm
+  inlines  = (CheckpointInline,)
 
-#class RecorridoAdmin(BaseModelAdmin):
-#  form = RouteModelForm
-#
-#  def add_view(self, request):
-#    return HttpResponseRedirect(reverse("admin:linea_route_changelist"))
-#
-#  def get_urls(self):
-#    from django.conf.urls import patterns, url
-#    urls = super(RecorridoAdmin, self).get_urls()
-#    my_urls = patterns('',
-#      url(r'^add/$', self.admin_site.admin_view(self.add_view),
-#      name='admin_update_feeds'))
-#    print my_urls + urls
-#    return my_urls + urls
+  def get_formsets(self, request, obj=None):
+    return [] if obj is None else super(ItineraryAdmin, self).get_formsets(request, obj)
+
+  def change_view(self, request, object_id, form_url='', extra_context=None):
+    obj = self.get_object(request, unquote(object_id))
+    if Checkpoint.objects.filter(itinerary=obj).count() == 0:
+      for point in Point.objects.filter(route=obj.route):
+        checkpoint = Checkpoint(point=point, itinerary=obj, line=obj.line)
+        checkpoint.save()
+    inline_instance = CheckpointInline(self.model, self.admin_site)
+    inline_instance.max_num = 0
+    Formset = inline_instance.get_formset(request, obj)
+    formset = Formset(instance=obj, prefix=Formset.get_default_prefix())
+    fieldsets = list(inline_instance.get_fieldsets(request, obj))
+    readonly = list(inline_instance.get_readonly_fields(request, obj))
+    prepopulated = dict(inline_instance.get_prepopulated_fields(request, obj))
+    inline_admin_formsets = helpers.InlineAdminFormSet(inline_instance, formset, fieldsets, prepopulated, readonly, model_admin=self)
+    extra_context = {'inline_admin_formsets': [inline_admin_formsets]}
+    return super(ItineraryAdmin, self).change_view(request, object_id, form_url, extra_context)
+
+  def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
+    return super(ItineraryAdmin, self).render_change_form(request, context, add, change, form_url, obj)
+
+
 
 admin.site.register(Person, PersonAdmin)
 admin.site.register(Bus, BusAdmin)
