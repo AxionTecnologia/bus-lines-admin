@@ -54,10 +54,21 @@ class Route(BaseModel):
   name = models.CharField(max_length=100)
 
 
-class Checkpoint(BaseModel):
+class Point(BaseModel):
+  route = models.ForeignKey(Route)
   x = models.IntegerField()
   y = models.IntegerField()
   radius = models.IntegerField()
   name = models.CharField(max_length=100)
-  route = models.ForeignKey(Route)
 
+
+class Itinerary(BaseModel):
+  route = models.ForeignKey(Route)
+  name = models.CharField(max_length=100)
+
+
+class Checkpoint(BaseModel):
+  point = models.ForeignKey(Point)
+  duration = models.IntegerField()
+  tolerance = models.IntegerField()
+  fine = models.IntegerField()

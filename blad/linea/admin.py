@@ -6,8 +6,8 @@ from itertools import repeat
 from django.contrib import admin
 
 from mantenedor.models import AppUser
-from linea.models import Person, Bus, Route, Checkpoint
-from linea.forms import BusModelForm, PersonModelForm, RouteModelForm
+from linea.models import Person, Bus, Route, Point, Itinerary
+from linea.forms import BusModelForm, PersonModelForm, RouteModelForm, ItineraryModelForm
 
 from django.contrib import auth
 
@@ -77,17 +77,40 @@ class PersonAdmin(BaseModelAdmin):
   list_display = ('get_full_name', 'get_line_number')
   form = PersonModelForm
 
+
 class BusAdmin(BaseModelAdmin):
   form = BusModelForm
 
-class CheckpointInline(BaseTabularInline):
-  model = Checkpoint
+
+class PointInline(BaseTabularInline):
+  model = Point
   extra = 1
+
 
 class RouteAdmin(BaseModelAdmin):
   form = RouteModelForm
-  inlines = (CheckpointInline,)
+  inlines = (PointInline,)
+
+
+class ItineraryAdmin(BaseModelAdmin):
+  form = ItineraryModelForm
+
+#class RecorridoAdmin(BaseModelAdmin):
+#  form = RouteModelForm
+#
+#  def add_view(self, request):
+#    return HttpResponseRedirect(reverse("admin:linea_route_changelist"))
+#
+#  def get_urls(self):
+#    from django.conf.urls import patterns, url
+#    urls = super(RecorridoAdmin, self).get_urls()
+#    my_urls = patterns('',
+#      url(r'^add/$', self.admin_site.admin_view(self.add_view),
+#      name='admin_update_feeds'))
+#    print my_urls + urls
+#    return my_urls + urls
 
 admin.site.register(Person, PersonAdmin)
 admin.site.register(Bus, BusAdmin)
 admin.site.register(Route, RouteAdmin)
+admin.site.register(Itinerary, ItineraryAdmin)

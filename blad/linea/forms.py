@@ -4,7 +4,7 @@
 from django import forms
 
 from mantenedor.models import AppUser
-from linea.models import Bus, Person, Route
+from linea.models import Bus, Person, Route, Itinerary
 
 class BaseModelForm(forms.ModelForm):
   def __init__(self, *args, **kwargs):
@@ -33,3 +33,8 @@ class PersonModelForm(BaseModelForm):
 class RouteModelForm(BaseModelForm):
   class Meta:
     model = Route
+
+
+class ItineraryModelForm(BaseModelForm):
+  class Meta:
+    model = Itinerary
