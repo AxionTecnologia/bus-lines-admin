@@ -6,6 +6,8 @@ from mantenedor.models import Line
 
 class BaseModel(models.Model):
   line = models.ForeignKey(Line, blank=True, null=False)
+  created_at = models.DateTimeField(auto_now_add=True)
+  updated_at = models.DateTimeField(auto_now=True)
 
   class Meta:
     abstract = True
@@ -56,8 +58,8 @@ class Route(BaseModel):
 
 class Point(BaseModel):
   route = models.ForeignKey(Route)
-  x = models.IntegerField()
-  y = models.IntegerField()
+  x = models.DecimalField(max_digits=10, decimal_places=4)
+  y = models.DecimalField(max_digits=10, decimal_places=4)
   radius = models.IntegerField()
   name = models.CharField(max_length=100)
 
@@ -75,3 +77,20 @@ class Checkpoint(BaseModel):
   duration = models.IntegerField(null=True, blank=False)
   tolerance = models.IntegerField(null=True, blank=False)
   fine = models.IntegerField(null=True, blank=False)
+
+
+class Schedule(BaseModel):
+  DAYS_OF_THE_WEEK_CHOICES = (
+    ('monday', 'Monday'),
+    ('tuesday','Tuesday'),
+    ('wednesday','Wednesday'),
+    ('thursday','Thursday'),
+    ('friday','Friday'),
+    ('saturday','Saturday'),
+    ('sunday','Sunday'),
+  )
+
+  itinerary = models.ForeignKey(Itinerary)
+  day_of_the_week = models.CharField(max_length=10, choices=DAYS_OF_THE_WEEK_CHOICES)
+  time_from = models.TimeField()
+  time_to = models.TimeField()

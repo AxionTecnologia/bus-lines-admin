@@ -8,8 +8,8 @@ from django.contrib.admin import helpers
 from django.contrib.admin.util import unquote
 
 from mantenedor.models import AppUser
-from linea.models import Person, Bus, Route, Point, Itinerary, Checkpoint
-from linea.forms import BusModelForm, PersonModelForm, RouteModelForm, ItineraryModelForm
+from linea.models import Person, Bus, Route, Point, Itinerary, Checkpoint, Schedule
+from linea.forms import BusModelForm, PersonModelForm, RouteModelForm, ItineraryModelForm, ScheduleModelForm
 
 from django.contrib import auth
 
@@ -56,6 +56,7 @@ class BaseModelAdmin(admin.ModelAdmin):
     return True
 
   def get_form(self, request, obj=None, **kwargs):
+    """Passing request to ModelForms to perfom some user based checkings"""
     ModelForm = super(BaseModelAdmin, self).get_form(request, obj, **kwargs)
     class ModelFormMetaClass(ModelForm):
       def __new__(cls, *args, **kwargs):
@@ -123,12 +124,13 @@ class ItineraryAdmin(BaseModelAdmin):
     extra_context = {'inline_admin_formsets': [inline_admin_formsets]}
     return super(ItineraryAdmin, self).change_view(request, object_id, form_url, extra_context)
 
-  def render_change_form(self, request, context, add=False, change=False, form_url='', obj=None):
-    return super(ItineraryAdmin, self).render_change_form(request, context, add, change, form_url, obj)
 
+class ScheduleAdmin(BaseModelAdmin):
+  form = ScheduleModelForm
 
 
 admin.site.register(Person, PersonAdmin)
 admin.site.register(Bus, BusAdmin)
 admin.site.register(Route, RouteAdmin)
 admin.site.register(Itinerary, ItineraryAdmin)
+admin.site.register(Schedule, ScheduleAdmin)
