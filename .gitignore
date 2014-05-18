@@ -8,3 +8,4 @@ lib
 .Python
 .DS_Store
 *.swp
+settings.py
