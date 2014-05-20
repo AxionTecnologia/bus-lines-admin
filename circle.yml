@@ -1,0 +1,12 @@
+machine:
+  environment:
+    PYTHONPATH: $HOME/bus-lines-admin/blad
+    PYTHONPATH: $HOME/bus-lines-admin/blad/blad
+
+test:
+  override:
+    - cp $HOME/bus-lines-admin/blad/blad/settings.py.copyme $HOME/bus-lines-admin/blad/blad/settings.py
+    - coverage run --source='.' blad/manage.py test
+
+  post:
+    - coveralls
