@@ -5,17 +5,24 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 class AuthUser(AbstractUser):
+
   def has_module_perms(self, app_label):
-    return super(AuthUser, self).has_module_perms(app_label) if self.is_superuser else True
+    """Any user has module perms.
+       This allows users(super or not) to see any app without creating
+       specific permissions.
+    """
+    return True
 
   class Meta(AbstractUser.Meta):
-          swappable = 'AUTH_USER_MODEL'
+    swappable = 'AUTH_USER_MODEL'
+
 
 class Line(models.Model):
   number = models.IntegerField()
 
   def __unicode__(self):
     return u"Línea {0}".format(self.number)
+
 
 class AppUser(models.Model):
   user = models.ForeignKey(AuthUser, unique=True, blank=True, null=False)
