@@ -6,7 +6,7 @@ machine:
 test:
   override:
     - cp $HOME/bus-lines-admin/blad/blad/settings.py.copyme $HOME/bus-lines-admin/blad/blad/settings.py
-    - coverage run --source='.' blad/manage.py test
+    - coverage run --source="blad" blad/manage.py test mantenedor
 
   post:
     - coveralls

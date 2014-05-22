@@ -49,4 +49,3 @@ class AppUserTestCase(TestCase):
     user = AppUser.objects.get(user=AuthUser.objects.get(username="you"))
     self.assertEqual(False, user.is_active())
 
-
