@@ -1,6 +1,8 @@
-from django.test import TestCase
+# -*- coding: utf-8 -*-
+from django.test import TestCase, Client
 
 from mantenedor.models import AuthUser, Line, AppUser
+
 
 class AuthUserTestCase(TestCase):
 
@@ -19,6 +21,7 @@ class AuthUserTestCase(TestCase):
   def test_superuser_has_not_module_perms(self):
     superuser = AuthUser.objects.get(username="superuser")
     self.assertEqual(True, superuser.has_module_perms("my_testing_app"))
+
 
 class AppUserTestCase(TestCase):
 
@@ -48,4 +51,29 @@ class AppUserTestCase(TestCase):
   def test_not_active_user_is_not_active(self):
     user = AppUser.objects.get(user=AuthUser.objects.get(username="you"))
     self.assertEqual(False, user.is_active())
+
+
+class LineTestCase(TestCase):
+
+  def setUp(self):
+    Line.objects.create(number=6)
+
+  def test_unicode(self):
+    line = Line.objects.get(number=6)
+    self.assertEqual(u"Línea 6", line.__unicode__())
+
+
+class AdminMainPageTestCase(TestCase):
+
+  def setUp(self):
+    user = AuthUser.objects.create_user(username="me", password="me")
+    user.is_superuser = user.is_staff = user.is_active = True
+    user.save()
+
+  def test_superuser_can_only_have_access_to_mantenedor_and_auth(self):
+    client = Client()
+    client.login(username="me", password="me")
+    response = client.get("/admin/")
+    app_list = response.context['app_list']
+    self.assertEqual(["Auth", "Mantenedor"], map(lambda app: app['name'], app_list))
 
